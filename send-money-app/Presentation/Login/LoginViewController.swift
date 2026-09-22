@@ -36,6 +36,9 @@ class LoginViewController: UIViewController {
         button.addAction(action, for: .touchUpInside)
         return button
     }()
+
+    private let activityIndicator = UIActivityIndicatorView(style: .medium)
+    var onLoginSuccess: (() -> Void)?
     
     private let viewModel: LoginViewModel
     init(viewModel: LoginViewModel) {
@@ -58,6 +61,7 @@ class LoginViewController: UIViewController {
         view.addSubview(usernameTextField)
         view.addSubview(passwordTextField)
         view.addSubview(loginButton)
+        view.addSubview(activityIndicator)
         
         usernameTextField.snp.makeConstraints { (make) in
             let padding: CGFloat = 16
@@ -81,29 +85,37 @@ class LoginViewController: UIViewController {
             make.left.equalToSuperview().offset(padding)
             make.right.equalToSuperview().inset(padding)
         }
+
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.snp.makeConstraints { make in
+            make.top.equalTo(loginButton.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+        }
     }
     
     private func setupBindings() {
         viewModel.onStateChange = { [weak self] state in
             DispatchQueue.main.async {
-                guard let self else { return }
-
-                switch state {
-                case .idle:
-                    break
-                case .loading:
-                    self.loginButton.isEnabled = false
-                    self.activityIndicator.startAnimating()
-                case .success:
-                    self.activityIndicator.stopAnimating()
-                    self.loginButton.isEnabled = true
-                    self.onLoginSuccess?()
-                case .failure(let message):
-                    self.activityIndicator.stopAnimating()
-                    self.loginButton.isEnabled = true
-                    self.showAlert(message: message)
-                }
+                self?.handleState(state)
             }
+        }
+    }
+
+    private func handleState(_ state: LoginViewModel.NetworkState) {
+        switch state {
+        case .idle:
+            break
+        case .loading:
+            loginButton.isEnabled = false
+            activityIndicator.startAnimating()
+        case .success:
+            activityIndicator.stopAnimating()
+            loginButton.isEnabled = true
+            onLoginSuccess?()
+        case .failure(let message):
+            activityIndicator.stopAnimating()
+            loginButton.isEnabled = true
+            showAlert(message: message)
         }
     }
     
