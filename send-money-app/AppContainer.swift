@@ -9,7 +9,7 @@ import UIKit
 
 class AppContainer {
     let authRepository: AuthRepositoryProtocol
-    init(authRepository: AuthRepositoryProtocol) {
+    init() {
         let apiClient = APIClient()
         self.authRepository = AuthRepository(apiClient: apiClient)
     }
