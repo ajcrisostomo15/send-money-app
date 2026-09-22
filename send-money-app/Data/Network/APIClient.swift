@@ -91,12 +91,6 @@ final class APIClient: APIClientProtocol {
         }
     }
 
-    func requestWithoutResponse(_ endpoint: Endpoint) async throws {
-        let request = try makeRequest(endpoint)
-        let (_, response) = try await session.data(for: request)
-        try validate(response)
-    }
-
     private func makeRequest(_ endpoint: Endpoint) throws -> URLRequest {
         let url = baseURL.appendingPathComponent(endpoint.path.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
         var request = URLRequest(url: url)
