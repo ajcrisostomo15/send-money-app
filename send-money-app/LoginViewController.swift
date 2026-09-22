@@ -6,14 +6,39 @@
 //
 
 import UIKit
-
+import SnapKit
 class LoginViewController: UIViewController {
 
+    private lazy var usernameTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Username"
+        textField.borderStyle = .roundedRect
+        return textField
+    }()
+    
+    private lazy var passwordTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Password"
+        textField.isSecureTextEntry = true
+        textField.borderStyle = .roundedRect
+        return textField
+    }()
+    
+    private lazy var loginButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Login", for: .normal)
+        return button
+    }()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
     }
 
+    private func setupInterface() {
+        
+    }
 
 }
 
