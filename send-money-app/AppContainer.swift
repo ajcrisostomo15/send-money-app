@@ -19,6 +19,17 @@ class AppContainer {
             authRepository: authRepository
         )
         let controller = LoginViewController(viewModel: viewModel)
+        controller.onLoginSuccess = { [weak self, weak controller] in
+            guard let self, let controller else { return }
+            let dashboard = self.makeDashboardViewController()
+            controller.navigationController?.setViewControllers([dashboard], animated: true)
+        }
+        return controller
+    }
+    
+    func makeDashboardViewController() -> UIViewController {
+        let viewModel = DashboardViewModel()
+        let controller = DashboardViewController(viewModel: viewModel)
         return controller
     }
 }
