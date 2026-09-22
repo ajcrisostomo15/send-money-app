@@ -101,6 +101,7 @@ class LoginViewController: UIViewController {
                 case .failure(let message):
                     self.activityIndicator.stopAnimating()
                     self.loginButton.isEnabled = true
+                    self.showAlert(message: message)
                 }
             }
         }
@@ -110,6 +111,16 @@ class LoginViewController: UIViewController {
         viewModel.login(username: usernameTextField.text ?? "",
                         password: passwordTextField.text ?? ""
         )
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(
+            title: "Login Failed",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 
