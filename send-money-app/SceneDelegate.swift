@@ -18,8 +18,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let windowScene = scene as? UIWindowScene else { return }
+
+        let container = AppContainer()
         let navigationController = UINavigationController(
-            rootViewController: LoginViewController()
+            rootViewController: container.makeLoginViewController()
         )
         navigationController.navigationBar.prefersLargeTitles = true
 
