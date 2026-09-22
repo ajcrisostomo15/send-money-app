@@ -50,6 +50,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupInterface()
+        setupBindings()
     }
 
     private func setupInterface() {
@@ -79,6 +80,29 @@ class LoginViewController: UIViewController {
             make.top.equalTo(passwordTextField.snp.bottom).offset(topPadding)
             make.left.equalToSuperview().offset(padding)
             make.right.equalToSuperview().inset(padding)
+        }
+    }
+    
+    private func setupBindings() {
+        viewModel.onStateChange = { [weak self] state in
+            DispatchQueue.main.async {
+                guard let self else { return }
+
+                switch state {
+                case .idle:
+                    break
+                case .loading:
+                    self.loginButton.isEnabled = false
+                    self.activityIndicator.startAnimating()
+                case .success:
+                    self.activityIndicator.stopAnimating()
+                    self.loginButton.isEnabled = true
+                    self.onLoginSuccess?()
+                case .failure(let message):
+                    self.activityIndicator.stopAnimating()
+                    self.loginButton.isEnabled = true
+                }
+            }
         }
     }
     
