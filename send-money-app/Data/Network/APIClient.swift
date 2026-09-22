@@ -34,14 +34,14 @@ enum AuthEndpoint {
             "password": password
         ]
 
-        let body = try JSONSerialization.data(
+        let _ = try JSONSerialization.data(
             withJSONObject: payload
         )
 
         return Endpoint(
             path: "/users",
-            method: .post,
-            body: body
+            method: .get,
+            body: nil
         )
     }
 }
