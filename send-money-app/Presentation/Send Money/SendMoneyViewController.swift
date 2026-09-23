@@ -56,9 +56,20 @@ class SendMoneyViewController: UIViewController {
         return stackView
     }()
 
+    private let viewModel: SendMoneyViewModel
+    init(viewModel: SendMoneyViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupInterface()
+        setupBindings()
     }
     
     private func setupInterface() {
@@ -74,8 +85,52 @@ class SendMoneyViewController: UIViewController {
             make.leading.trailing.equalTo(view.layoutMarginsGuide)
         }
     }
-
-    private func submitTapped() {
-        
+    
+    private func setupBindings() {
+        viewModel.onStateChange = { [weak self] state in
+            DispatchQueue.main.async {
+                self?.handleState(state)
+            }
+        }
     }
+    
+    private func handleState(_ state: SendMoneyViewModel.NetworkState) {
+        switch state {
+        case .idle:
+            break
+        case .loading:
+            self.submitButton.isEnabled = false
+            self.activityIndicator.startAnimating()
+        case .success(let transaction):
+            self.submitButton.isEnabled = true
+            self.activityIndicator.stopAnimating()
+            self.showBottomSheet(
+                title: "Money Sent",
+                message: "₱\(NSDecimalNumber(decimal: transaction.amount).doubleValue.formatted(.number.precision(.fractionLength(2)))) was sent successfully."
+            )
+        case .failure(let message):
+            self.submitButton.isEnabled = true
+            self.activityIndicator.stopAnimating()
+            self.showBottomSheet(title: "Unable to Send", message: message)
+        }
+    }
+
+    private func showBottomSheet(title: String, message: String) {
+        let sheet = BottomSheetViewController(titleText: title, messageText: message)
+        sheet.onDismiss = { [weak self] in
+            self?.dismiss(animated: true)
+        }
+
+        let navigation = UINavigationController(rootViewController: sheet)
+        if let presentation = navigation.sheetPresentationController {
+            presentation.detents = [.medium()]
+            presentation.prefersGrabberVisible = true
+        }
+        present(navigation, animated: true)
+    }
+    
+    private func submitTapped() {
+        viewModel.submit(amountText: amountField.text ?? "")
+    }
+    
 }
