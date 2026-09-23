@@ -8,11 +8,14 @@
 import Foundation
 
 struct TransactionAPIResponse: Codable {
-    let id: String
+    let id: Int
+    let title: String
+    let body: String
+    let userId: Int
 }
 
 struct Transaction: Codable {
-    let id: String
+    let id: Int
     let amount: Decimal
     let date: Date
     let recipient: String
