@@ -82,6 +82,10 @@ class DashboardViewController: UIViewController {
     private lazy var logoutButton: UIButton = {
         let button = makeButton(title: "Logout")
         button.configuration?.baseBackgroundColor = .systemGray
+        let action = UIAction(handler: { [weak self] _ in
+            self?.didTappedlogout()
+        })
+        button.addAction(action, for: .touchUpInside)
         return button
     }()
 
@@ -101,6 +105,7 @@ class DashboardViewController: UIViewController {
     private var isBalanceVisible = true
     public var onSendMoney: (() -> Void)?
     public var onTransactions: (() -> Void)?
+    public var onLogout: (() -> Void)?
     init(viewModel: DashboardViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -117,6 +122,7 @@ class DashboardViewController: UIViewController {
     }
     
     private func setupInterface() {
+        title = "Dashboard"
         view.backgroundColor = .systemGroupedBackground
         view.addSubview(contentStackView)
 
@@ -166,5 +172,9 @@ class DashboardViewController: UIViewController {
     
     private func didTappedTransactions() {
         onTransactions?()
+    }
+    
+    private func didTappedlogout() {
+        onLogout?()
     }
 }
