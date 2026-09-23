@@ -67,6 +67,7 @@ class TransactionHistoryViewController: UIViewController {
         switch state {
         case .failure(let error):
             self.activityIndicator.stopAnimating()
+            self.showAlert(message: error)
         case .loaded(let transactions):
             self.transactions = transactions
             self.activityIndicator.stopAnimating()
@@ -80,6 +81,16 @@ class TransactionHistoryViewController: UIViewController {
     
     private func loadHistoryList() {
         viewModel.getListOfHistory()
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(
+            title: "Transaction History",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 
