@@ -137,6 +137,8 @@ private final class SendMoneyMockTransactionRepository: TransactionRepositoryPro
         return transaction
     }
 
+    func cachedTransactions() -> [Transaction] { [] }
+
     func fetchTransactions() async throws -> [Transaction] {
         []
     }
