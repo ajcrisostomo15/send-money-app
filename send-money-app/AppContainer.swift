@@ -9,9 +9,11 @@ import UIKit
 
 class AppContainer {
     let authRepository: AuthRepositoryProtocol
+    let walletStore: WalletStore
     init() {
         let apiClient = APIClient()
         self.authRepository = AuthRepository(apiClient: apiClient)
+        self.walletStore = WalletStore()
     }
     
     func makeLoginViewController() -> UIViewController {
@@ -28,7 +30,7 @@ class AppContainer {
     }
     
     func makeDashboardViewController() -> UIViewController {
-        let viewModel = DashboardViewModel()
+        let viewModel = DashboardViewModel(walletStore: walletStore)
         let controller = DashboardViewController(viewModel: viewModel)
         return controller
     }
