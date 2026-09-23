@@ -94,6 +94,12 @@ Current unit test coverage includes:
 - `SendMoneyViewModelTests`
 - `TransactionHistoryViewModelTests`
 
+## Continuous integration
+
+The [iOS CI workflow](.github/workflows/ios-ci.yml) builds the app and runs the view-model unit tests on pushes and pull requests to `main` and `develop`. It can also be started manually from GitHub Actions once the workflow is on the default branch.
+
+CI uses the shared `send-money-app` scheme, Xcode 26.6, and an iPhone 17 simulator running iOS 26.5. Swift package dependencies are resolved by `xcodebuild`. Simulator builds do not require signing certificates or repository secrets.
+
 ## Dependencies
 
 The project uses SnapKit for Auto Layout constraints. The dependency is included in the workspace/project structure.
