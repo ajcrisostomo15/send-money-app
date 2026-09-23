@@ -10,10 +10,12 @@ import UIKit
 class AppContainer {
     let authRepository: AuthRepositoryProtocol
     let walletStore: WalletStore
+    let transactionRepository: TransactionRepositoryProtocol
     init() {
         let apiClient = APIClient()
         self.authRepository = AuthRepository(apiClient: apiClient)
         self.walletStore = WalletStore()
+        self.transactionRepository = TransactionRepository(apiClient: apiClient)
     }
     
     func makeLoginViewController() -> UIViewController {
@@ -45,7 +47,10 @@ class AppContainer {
     }
     
     func makeSendMoneyViewController() -> UIViewController {
-        let controller = SendMoneyViewController()
+        let viewModel = SendMoneyViewModel(walletStore: walletStore,
+                                           transactionRepository: transactionRepository
+        )
+        let controller = SendMoneyViewController(viewModel: viewModel)
         return controller
     }
 }
