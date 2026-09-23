@@ -10,7 +10,6 @@ import SnapKit
 
 class DashboardViewController: UIViewController {
     private var isBalanceVisible = true
-    private let walletBalance = "$12,450.00"
 
     private var balanceTitleLabel: UILabel {
         let label = UILabel()
@@ -21,7 +20,6 @@ class DashboardViewController: UIViewController {
 
     private lazy var balanceLabel: UILabel = {
         let label = UILabel()
-        label.text = walletBalance
         label.font = .systemFont(ofSize: 34, weight: .bold)
         return label
     }()
@@ -137,6 +135,7 @@ class DashboardViewController: UIViewController {
     }
 
     private func toggleBalance() {
+        let walletBalance = viewModel.displayBalance()
         isBalanceVisible.toggle()
         balanceLabel.text = isBalanceVisible ? walletBalance : "********"
         visibilityButton.setImage(
