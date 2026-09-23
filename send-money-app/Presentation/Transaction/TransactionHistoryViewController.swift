@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 
 class TransactionHistoryViewController: UIViewController {
-    private let transactions: [Transaction] = []
-
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(TransactionCell.self, forCellReuseIdentifier: TransactionCell.reuseID)
@@ -23,6 +21,17 @@ class TransactionHistoryViewController: UIViewController {
         activityIndicator.hidesWhenStopped = true
         return activityIndicator
     }()
+    
+    private let transactions: [Transaction] = []
+    private let viewModel: TransactionHistoryViewModel
+    init(viewModel: TransactionHistoryViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +39,7 @@ class TransactionHistoryViewController: UIViewController {
     }
     
     private func setupInterface() {
+        title = "Transactions"
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
         view.addSubview(activityIndicator)
