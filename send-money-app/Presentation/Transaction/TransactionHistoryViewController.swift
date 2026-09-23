@@ -22,7 +22,7 @@ class TransactionHistoryViewController: UIViewController {
         return activityIndicator
     }()
     
-    private let transactions: [Transaction] = []
+    private var transactions: [Transaction] = []
     private let viewModel: TransactionHistoryViewModel
     init(viewModel: TransactionHistoryViewModel) {
         self.viewModel = viewModel
@@ -36,6 +36,8 @@ class TransactionHistoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupInterface()
+        setupBindings()
+        loadHistoryList()
     }
     
     private func setupInterface() {
@@ -51,6 +53,33 @@ class TransactionHistoryViewController: UIViewController {
         activityIndicator.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
+    }
+    
+    private func setupBindings() {
+        viewModel.onStateChange = { [weak self] state in
+            DispatchQueue.main.async {
+                self?.handleState(state)
+            }
+        }
+    }
+    
+    private func handleState(_ state: TransactionHistoryViewModel.NetworkState) {
+        switch state {
+        case .failure(let error):
+            self.activityIndicator.stopAnimating()
+        case .loaded(let transactions):
+            self.transactions = transactions
+            self.activityIndicator.stopAnimating()
+            self.tableView.reloadData()
+        case .idle:
+            break
+        case .loading:
+            self.activityIndicator.startAnimating()
+        }
+    }
+    
+    private func loadHistoryList() {
+        viewModel.getListOfHistory()
     }
 }
 
