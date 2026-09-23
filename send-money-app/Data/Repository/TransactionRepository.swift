@@ -14,9 +14,12 @@ protocol TransactionRepositoryProtocol {
 
 class TransactionRepository: TransactionRepositoryProtocol {
     private let apiClient: APIClientProtocol
-    
-    init(apiClient: APIClientProtocol) {
+    private let calendar: Calendar
+    init(apiClient: APIClientProtocol,
+         calendar: Calendar = .current
+    ) {
         self.apiClient = apiClient
+        self.calendar = calendar
     }
     func sendMoney(amount: Decimal) async throws -> Transaction {
         let endpoint = try TransactionEndpoint.send(amount: amount)
@@ -37,7 +40,7 @@ class TransactionRepository: TransactionRepositoryProtocol {
     
     func fetchTransactions() async throws -> [Transaction] {
         do {
-            let endpoint = try await TransactionEndpoint.history()
+            let endpoint = try TransactionEndpoint.history()
             let response: [TransactionAPIResponse] = try await apiClient.request(
                 endpoint,
                 responseType: [TransactionAPIResponse].self
