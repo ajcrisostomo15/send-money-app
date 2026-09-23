@@ -9,35 +9,53 @@ import UIKit
 import SnapKit
 class LoginViewController: UIViewController {
 
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Send Money"
+        label.font = .systemFont(ofSize: 34, weight: .bold)
+        label.textAlignment = .center
+        return label
+    }()
+
     private lazy var usernameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Username"
-        textField.borderStyle = .roundedRect
+        let textField = makeTextField(placeholder: "Username")
         return textField
     }()
     
     private lazy var passwordTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Password"
+        let textField = makeTextField(placeholder: "Password")
         textField.isSecureTextEntry = true
-        textField.borderStyle = .roundedRect
         return textField
     }()
     
     private lazy var loginButton: UIButton = {
-        let button = UIButton(type: .roundedRect)
-        button.setTitle("Login", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = "Login"
+        configuration.cornerStyle = .medium
+
+        let button = UIButton(configuration: configuration)
         let action = UIAction(handler: { [weak self] _ in
             self?.onLoginTapped()
         })
-        
+
         button.addAction(action, for: .touchUpInside)
         return button
     }()
 
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
+
+    private lazy var contentStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            titleLabel,
+            usernameTextField,
+            passwordTextField,
+            loginButton,
+            activityIndicator
+        ])
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        return stackView
+    }()
     var onLoginSuccess: (() -> Void)?
     
     private let viewModel: LoginViewModel
@@ -57,39 +75,24 @@ class LoginViewController: UIViewController {
     }
 
     private func setupInterface() {
-        view.backgroundColor = .white
-        view.addSubview(usernameTextField)
-        view.addSubview(passwordTextField)
-        view.addSubview(loginButton)
-        view.addSubview(activityIndicator)
-        
-        usernameTextField.snp.makeConstraints { (make) in
-            let padding: CGFloat = 16
-            make.centerY.equalToSuperview()
-            make.left.equalToSuperview().offset(padding)
-            make.right.equalToSuperview().inset(padding)
+        view.backgroundColor = .systemGroupedBackground
+        view.addSubview(contentStackView)
+
+        [usernameTextField, passwordTextField].forEach { textField in
+            textField.snp.makeConstraints { make in
+                make.height.equalTo(48)
+            }
         }
-        
-        passwordTextField.snp.makeConstraints { make in
-            let topPadding: CGFloat = 8
-            let padding: CGFloat = 16
-            make.top.equalTo(usernameTextField.snp.bottom).offset(topPadding)
-            make.left.equalToSuperview().offset(padding)
-            make.right.equalToSuperview().inset(padding)
-        }
-        
+
         loginButton.snp.makeConstraints { make in
-            let topPadding: CGFloat = 8
-            let padding: CGFloat = 16
-            make.top.equalTo(passwordTextField.snp.bottom).offset(topPadding)
-            make.left.equalToSuperview().offset(padding)
-            make.right.equalToSuperview().inset(padding)
+            make.height.equalTo(50)
         }
 
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.snp.makeConstraints { make in
-            make.top.equalTo(loginButton.snp.bottom).offset(12)
-            make.centerX.equalToSuperview()
+        contentStackView.setCustomSpacing(32, after: titleLabel)
+        contentStackView.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.trailing.equalTo(view.layoutMarginsGuide)
         }
     }
     
@@ -99,6 +102,19 @@ class LoginViewController: UIViewController {
                 self?.handleState(state)
             }
         }
+    }
+
+    private func makeTextField(placeholder: String) -> UITextField {
+        let textField = UITextField()
+        textField.placeholder = placeholder
+        textField.borderStyle = .none
+        textField.backgroundColor = .systemBackground
+        textField.layer.borderColor = UIColor.systemBlue.cgColor
+        textField.layer.borderWidth = 1
+        textField.layer.cornerRadius = 8
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 0))
+        textField.leftViewMode = .always
+        return textField
     }
 
     private func handleState(_ state: LoginViewModel.NetworkState) {
