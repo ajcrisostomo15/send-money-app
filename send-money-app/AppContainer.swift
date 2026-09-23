@@ -43,6 +43,14 @@ class AppContainer {
             )
         }
         
+        controller.onTransactions = { [weak self, weak controller] in
+            guard let self, let controller else { return }
+            controller.navigationController?.pushViewController(
+                self.makeTransactionHistoryViewController(),
+                animated: true
+            )
+        }
+        
         return controller
     }
     
@@ -52,5 +60,12 @@ class AppContainer {
         )
         let controller = SendMoneyViewController(viewModel: viewModel)
         return controller
+    }
+    
+    func makeTransactionHistoryViewController() -> UIViewController {
+        let viewModel = TransactionHistoryViewModel(
+            transactionRepository: transactionRepository
+        )
+        return TransactionHistoryViewController(viewModel: viewModel)
     }
 }

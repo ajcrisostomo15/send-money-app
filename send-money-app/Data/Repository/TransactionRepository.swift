@@ -9,13 +9,17 @@ import Foundation
 
 protocol TransactionRepositoryProtocol {
     func sendMoney(amount: Decimal) async throws -> Transaction
+    func fetchTransactions() async throws -> [Transaction]
 }
 
 class TransactionRepository: TransactionRepositoryProtocol {
     private let apiClient: APIClientProtocol
-    
-    init(apiClient: APIClientProtocol) {
+    private let calendar: Calendar
+    init(apiClient: APIClientProtocol,
+         calendar: Calendar = .current
+    ) {
         self.apiClient = apiClient
+        self.calendar = calendar
     }
     func sendMoney(amount: Decimal) async throws -> Transaction {
         let endpoint = try TransactionEndpoint.send(amount: amount)
@@ -32,5 +36,29 @@ class TransactionRepository: TransactionRepositoryProtocol {
         )
         
         return transaction
+    }
+    
+    func fetchTransactions() async throws -> [Transaction] {
+        do {
+            let endpoint = try TransactionEndpoint.history()
+            let response: [TransactionAPIResponse] = try await apiClient.request(
+                endpoint,
+                responseType: [TransactionAPIResponse].self
+            )
+
+            let transactions = response.prefix(10).map { item in
+                Transaction(
+                    id: item.id,
+                    amount: Decimal(item.id * 10),
+                    date: calendar.date(byAdding: .day, value: -item.id, to: Date()) ?? Date(),
+                    recipient: "Recipient \(item.userId)"
+                )
+            }
+
+            let result = Array(transactions)
+            return result
+        } catch {
+            throw error
+        }
     }
 }
