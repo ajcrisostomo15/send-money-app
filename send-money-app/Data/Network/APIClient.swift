@@ -52,10 +52,9 @@ enum TransactionEndpoint {
     ) throws -> Endpoint {
 
         let payload: [String: Any] = [
-            "amount": NSDecimalNumber(
-                decimal: amount
-            ).doubleValue,
-            "recipient": "Demo Recipient"
+            "title": "P\(amount)",
+            "body": "Demo Recipient",
+            "userId": 1
         ]
 
         let body = try JSONSerialization.data(
