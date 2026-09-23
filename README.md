@@ -78,6 +78,12 @@ Example username:
 Bret
 ```
 
+## Transaction history and the mock API
+
+Transaction history immediately displays transfers saved locally in `UserDefaults`, including when the device is offline. A GET request to JSONPlaceholder still runs in the background to demonstrate API integration. Its post records are not mapped into wallet transactions: they do not represent the transfers submitted by this app. Successful POST requests save the submitted amount, current date, and demo recipient locally. GET failures leave that local history available, and a device without saved transfers shows an empty history.
+
+This is a mock API compromise: the displayed history comes from local transfers rather than the GET response. A production transaction API should return transaction records that can be reconciled with the cache.
+
 ## Testing
 
 Run tests from Xcode with `Command-U`, or select the `send-money-app` test plan and run the unit test target.
