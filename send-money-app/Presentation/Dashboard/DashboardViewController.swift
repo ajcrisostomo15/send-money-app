@@ -29,11 +29,10 @@ class DashboardViewController: UIViewController {
     private lazy var visibilityButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "eye"), for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(toggleBalance),
-            for: .touchUpInside
-        )
+        let action = UIAction(handler: { [weak self] _ in
+            self?.toggleBalance()
+        })
+        button.addAction(action, for: .touchUpInside)
         return button
     }()
 
@@ -108,6 +107,7 @@ class DashboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupInterface()
+        updateBalance()
     }
     
     private func setupInterface() {
@@ -136,11 +136,19 @@ class DashboardViewController: UIViewController {
         return button
     }
 
-    @objc private func toggleBalance() {
+    private func toggleBalance() {
         isBalanceVisible.toggle()
         balanceLabel.text = isBalanceVisible ? walletBalance : "********"
         visibilityButton.setImage(
             UIImage(systemName: isBalanceVisible ? "eye" : "eye.slash"),
+            for: .normal
+        )
+    }
+    
+    private func updateBalance() {
+        balanceLabel.text = viewModel.displayBalance()
+        visibilityButton.setImage(
+            UIImage(systemName: viewModel.isBalanceVisible ? "eye.slash" : "eye"),
             for: .normal
         )
     }
