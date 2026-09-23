@@ -68,8 +68,8 @@ enum TransactionEndpoint {
         )
     }
     
-    static func history() -> Endpoint {
-        Endpoint(
+    static func history() throws -> Endpoint {
+        return Endpoint(
             path: "/posts",
             method: .get,
             body: nil
