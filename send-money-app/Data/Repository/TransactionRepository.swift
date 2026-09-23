@@ -8,6 +8,7 @@
 import Foundation
 
 protocol TransactionRepositoryProtocol {
+    func cachedTransactions() -> [Transaction]
     func sendMoney(amount: Decimal) async throws -> Transaction
     func fetchTransactions() async throws -> [Transaction]
 }
@@ -46,6 +47,10 @@ class TransactionRepository: TransactionRepositoryProtocol {
         return transaction
     }
     
+    func cachedTransactions() -> [Transaction] {
+        cache.load()
+    }
+
     func fetchTransactions() async throws -> [Transaction] {
         do {
             let endpoint = try TransactionEndpoint.history()
@@ -54,10 +59,10 @@ class TransactionRepository: TransactionRepositoryProtocol {
                 responseType: [TransactionAPIResponse].self
             )
 
-            let cached = cache.load()
-            return cached
         } catch {
-            throw error
+            // JSONPlaceholder posts are not wallet transactions. A failed demo
+            // request must not prevent access to locally saved transfers.
         }
+        return cache.load()
     }
 }

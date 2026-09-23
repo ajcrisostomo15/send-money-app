@@ -25,7 +25,8 @@ class TransactionHistoryViewModel {
     }
 
     func getListOfHistory() {
-        onStateChange?(.loading)
+        transactions = transactionRepository.cachedTransactions()
+        onStateChange?(.loaded(transactions))
 
         Task {
             do {
