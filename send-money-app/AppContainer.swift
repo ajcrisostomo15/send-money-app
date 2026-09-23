@@ -55,6 +55,13 @@ class AppContainer {
             )
         }
         
+        controller.onLogout = { [weak self, weak controller] in
+            guard let self, let controller else { return }
+            walletStore.reset()
+            let loginViewController = self.makeLoginViewController()
+            controller.navigationController?.setViewControllers([loginViewController], animated: true)
+        }
+        
         return controller
     }
     
