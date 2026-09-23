@@ -15,7 +15,11 @@ class AppContainer {
         let apiClient = APIClient()
         self.authRepository = AuthRepository(apiClient: apiClient)
         self.walletStore = WalletStore()
-        self.transactionRepository = TransactionRepository(apiClient: apiClient)
+        let cache = TransactionCache()
+        self.transactionRepository = TransactionRepository(
+            apiClient: apiClient,
+            cache: cache
+        )
     }
     
     func makeLoginViewController() -> UIViewController {
