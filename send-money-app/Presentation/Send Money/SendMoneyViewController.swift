@@ -73,6 +73,7 @@ class SendMoneyViewController: UIViewController {
     }
     
     private func setupInterface() {
+        title = "Send Money"
         view.backgroundColor = .systemBackground
         view.addSubview(contentStackView)
 
