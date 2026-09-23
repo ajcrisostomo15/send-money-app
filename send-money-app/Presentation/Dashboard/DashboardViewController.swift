@@ -122,6 +122,7 @@ class DashboardViewController: UIViewController {
     }
     
     private func setupInterface() {
+        title = "Dashboard"
         view.backgroundColor = .systemGroupedBackground
         view.addSubview(contentStackView)
 
