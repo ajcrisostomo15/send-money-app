@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+struct TransactionAPIResponse: Codable {
+    let id: String
+}
+
+struct Transaction: Codable {
+    let id: String
+    let amount: Decimal
+    let date: Date
+    let recipient: String
+}
