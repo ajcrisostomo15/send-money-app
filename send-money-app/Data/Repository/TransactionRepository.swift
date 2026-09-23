@@ -19,9 +19,9 @@ class TransactionRepository: TransactionRepositoryProtocol {
     }
     func sendMoney(amount: Decimal) async throws -> Transaction {
         let endpoint = try TransactionEndpoint.send(amount: amount)
-        let response: Transaction = try await apiClient.request(
+        let response: TransactionAPIResponse = try await apiClient.request(
             endpoint,
-            responseType: Transaction.self
+            responseType: TransactionAPIResponse.self
         )
 
         let transaction = Transaction(
