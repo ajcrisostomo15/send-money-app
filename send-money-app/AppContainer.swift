@@ -32,6 +32,20 @@ class AppContainer {
     func makeDashboardViewController() -> UIViewController {
         let viewModel = DashboardViewModel(walletStore: walletStore)
         let controller = DashboardViewController(viewModel: viewModel)
+        
+        controller.onSendMoney = { [weak self, weak controller] in
+            guard let self, let controller else { return }
+            controller.navigationController?.pushViewController(
+                self.makeSendMoneyViewController(),
+                animated: true
+            )
+        }
+        
+        return controller
+    }
+    
+    func makeSendMoneyViewController() -> UIViewController {
+        let controller = SendMoneyViewController()
         return controller
     }
 }

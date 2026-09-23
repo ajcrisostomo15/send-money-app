@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 
 class DashboardViewController: UIViewController {
-    private var isBalanceVisible = true
-
     private var balanceTitleLabel: UILabel {
         let label = UILabel()
         label.text = "Wallet Balance"
@@ -65,6 +63,10 @@ class DashboardViewController: UIViewController {
 
     private lazy var sendButton: UIButton = {
         let button = makeButton(title: "Send Money")
+        let action = UIAction(handler: { [weak self] _ in
+            self?.didTappedSendMoney()
+        })
+        button.addAction(action, for: .touchUpInside)
         return button
     }()
 
@@ -92,7 +94,8 @@ class DashboardViewController: UIViewController {
     }()
     
     private let viewModel: DashboardViewModel
-    
+    private var isBalanceVisible = true
+    var onSendMoney: (() -> Void)?
     init(viewModel: DashboardViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -150,5 +153,9 @@ class DashboardViewController: UIViewController {
             UIImage(systemName: viewModel.isBalanceVisible ? "eye.slash" : "eye"),
             for: .normal
         )
+    }
+    
+    private func didTappedSendMoney() {
+        onSendMoney?()
     }
 }
