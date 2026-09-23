@@ -9,9 +9,6 @@ import UIKit
 import SnapKit
 
 class DashboardViewController: UIViewController {
-    private var isBalanceVisible = true
-    private let walletBalance = "$12,450.00"
-
     private var balanceTitleLabel: UILabel {
         let label = UILabel()
         label.text = "Wallet Balance"
@@ -21,7 +18,6 @@ class DashboardViewController: UIViewController {
 
     private lazy var balanceLabel: UILabel = {
         let label = UILabel()
-        label.text = walletBalance
         label.font = .systemFont(ofSize: 34, weight: .bold)
         return label
     }()
@@ -29,11 +25,10 @@ class DashboardViewController: UIViewController {
     private lazy var visibilityButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "eye"), for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(toggleBalance),
-            for: .touchUpInside
-        )
+        let action = UIAction(handler: { [weak self] _ in
+            self?.toggleBalance()
+        })
+        button.addAction(action, for: .touchUpInside)
         return button
     }()
 
@@ -68,6 +63,10 @@ class DashboardViewController: UIViewController {
 
     private lazy var sendButton: UIButton = {
         let button = makeButton(title: "Send Money")
+        let action = UIAction(handler: { [weak self] _ in
+            self?.didTappedSendMoney()
+        })
+        button.addAction(action, for: .touchUpInside)
         return button
     }()
 
@@ -95,7 +94,8 @@ class DashboardViewController: UIViewController {
     }()
     
     private let viewModel: DashboardViewModel
-    
+    private var isBalanceVisible = true
+    var onSendMoney: (() -> Void)?
     init(viewModel: DashboardViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -108,6 +108,7 @@ class DashboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupInterface()
+        updateBalance()
     }
     
     private func setupInterface() {
@@ -136,12 +137,25 @@ class DashboardViewController: UIViewController {
         return button
     }
 
-    @objc private func toggleBalance() {
+    private func toggleBalance() {
+        let walletBalance = viewModel.displayBalance()
         isBalanceVisible.toggle()
         balanceLabel.text = isBalanceVisible ? walletBalance : "********"
         visibilityButton.setImage(
             UIImage(systemName: isBalanceVisible ? "eye" : "eye.slash"),
             for: .normal
         )
+    }
+    
+    private func updateBalance() {
+        balanceLabel.text = viewModel.displayBalance()
+        visibilityButton.setImage(
+            UIImage(systemName: viewModel.isBalanceVisible ? "eye.slash" : "eye"),
+            for: .normal
+        )
+    }
+    
+    private func didTappedSendMoney() {
+        onSendMoney?()
     }
 }
