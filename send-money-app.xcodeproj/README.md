@@ -78,12 +78,6 @@ Example username:
 Bret
 ```
 
-## Transaction history and the mock API
-
-Transaction history immediately displays transfers saved locally in `UserDefaults`, including when the device is offline. A GET request to JSONPlaceholder still runs in the background to demonstrate API integration. Its post records are not mapped into wallet transactions: they do not represent the transfers submitted by this app. Successful POST requests save the submitted amount, current date, and demo recipient locally. GET failures leave that local history available, and a device without saved transfers shows an empty history.
-
-This is a mock API compromise: the displayed history comes from local transfers rather than the GET response. A production transaction API should return transaction records that can be reconciled with the cache.
-
 ## Testing
 
 Run tests from Xcode with `Command-U`, or select the `send-money-app` test plan and run the unit test target.
@@ -93,12 +87,6 @@ Current unit test coverage includes:
 - `LoginViewModelTests`
 - `SendMoneyViewModelTests`
 - `TransactionHistoryViewModelTests`
-
-## Continuous integration
-
-The [iOS CI workflow](.github/workflows/ios-ci.yml) builds the app and runs the view-model unit tests on pushes and pull requests to `main` and `develop`. It can also be started manually from GitHub Actions once the workflow is on the default branch.
-
-CI uses the shared `send-money-app` scheme, Xcode 26.6, and an iPhone 17 simulator running iOS 26.5. Swift package dependencies are resolved by `xcodebuild`. Simulator builds do not require signing certificates or repository secrets.
 
 ## Dependencies
 
