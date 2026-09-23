@@ -72,6 +72,10 @@ class DashboardViewController: UIViewController {
 
     private lazy var historyButton: UIButton = {
         let button = makeButton(title: "Transaction History")
+        let action = UIAction(handler: { [weak self] _ in
+            self?.didTappedTransactions()
+        })
+        button.addAction(action, for: .touchUpInside)
         return button
     }()
 
@@ -95,7 +99,8 @@ class DashboardViewController: UIViewController {
     
     private let viewModel: DashboardViewModel
     private var isBalanceVisible = true
-    var onSendMoney: (() -> Void)?
+    public var onSendMoney: (() -> Void)?
+    public var onTransactions: (() -> Void)?
     init(viewModel: DashboardViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -157,5 +162,9 @@ class DashboardViewController: UIViewController {
     
     private func didTappedSendMoney() {
         onSendMoney?()
+    }
+    
+    private func didTappedTransactions() {
+        onTransactions?()
     }
 }
