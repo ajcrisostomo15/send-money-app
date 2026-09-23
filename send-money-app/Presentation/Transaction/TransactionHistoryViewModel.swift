@@ -6,3 +6,34 @@
 //
 
 import Foundation
+
+class TransactionHistoryViewModel {
+    enum NetworkState {
+        case idle
+        case loading
+        case loaded([Transaction])
+        case failure(String)
+    }
+
+    private let transactionRepository: TransactionRepositoryProtocol
+
+    private(set) var transactions: [Transaction] = []
+    var onStateChange: ((NetworkState) -> Void)?
+
+    init(transactionRepository: TransactionRepositoryProtocol) {
+        self.transactionRepository = transactionRepository
+    }
+
+    func getListOfHistory() {
+        onStateChange?(.loading)
+
+        Task {
+            do {
+                transactions = try await transactionRepository.fetchTransactions()
+                onStateChange?(.loaded(transactions))
+            } catch {
+                onStateChange?(.failure(error.localizedDescription))
+            }
+        }
+    }
+}
