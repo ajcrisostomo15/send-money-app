@@ -67,6 +67,15 @@ enum TransactionEndpoint {
             body: body
         )
     }
+    
+    static func history() -> Endpoint {
+        Endpoint(
+            path: "/posts",
+            method: .get,
+            body: nil
+        )
+    }
+
 }
 
 enum APIError: LocalizedError {
