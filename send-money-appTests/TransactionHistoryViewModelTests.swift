@@ -10,7 +10,7 @@ import XCTest
 
 final class TransactionHistoryViewModelTests: XCTestCase {
 
-    func testGetListOfHistoryEmitsLoadingThenLoadedAndStoresTransactions() {
+    func testGetListOfHistoryDisplaysCacheBeforeFetching() {
         let transactions = [
             Transaction(
                 id: 1,
@@ -32,16 +32,18 @@ final class TransactionHistoryViewModelTests: XCTestCase {
 
         viewModel.onStateChange = { state in
             receivedStates.append(state)
-            if case .loaded = state {
+            if case .loaded = state, receivedStates.count == 2 {
                 loadedExpectation.fulfill()
             }
         }
 
         viewModel.getListOfHistory()
+        XCTAssertEqual(viewModel.transactions.map(\.id), [1, 2])
+        XCTAssertEqual(receivedStates.first?.loadedTransactions?.map(\.id), [1, 2])
 
         wait(for: [loadedExpectation], timeout: 1.0)
         XCTAssertEqual(receivedStates.count, 2)
-        XCTAssertTrue(receivedStates[0].isLoading)
+        XCTAssertNotNil(receivedStates[0].loadedTransactions)
         XCTAssertEqual(receivedStates[1].loadedTransactions?.map(\.id), [1, 2])
         XCTAssertEqual(viewModel.transactions.map(\.recipient), ["Alice", "Bob"])
         XCTAssertEqual(repository.fetchTransactionsCallCount, 1)
@@ -64,7 +66,7 @@ final class TransactionHistoryViewModelTests: XCTestCase {
 
         wait(for: [failureExpectation], timeout: 1.0)
         XCTAssertEqual(receivedStates.count, 2)
-        XCTAssertTrue(receivedStates[0].isLoading)
+        XCTAssertNotNil(receivedStates[0].loadedTransactions)
         XCTAssertEqual(receivedStates[1].failureMessage, HistoryTestError.network.localizedDescription)
         XCTAssertTrue(viewModel.transactions.isEmpty)
         XCTAssertEqual(repository.fetchTransactionsCallCount, 1)
@@ -89,6 +91,8 @@ private final class HistoryMockTransactionRepository: TransactionRepositoryProto
             recipient: "Demo Recipient"
         )
     }
+
+    func cachedTransactions() -> [Transaction] { transactions }
 
     func fetchTransactions() async throws -> [Transaction] {
         fetchTransactionsCallCount += 1
