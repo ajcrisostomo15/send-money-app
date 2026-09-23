@@ -102,7 +102,6 @@ class DashboardViewController: UIViewController {
     }()
     
     private let viewModel: DashboardViewModel
-    private var isBalanceVisible = true
     public var onSendMoney: (() -> Void)?
     public var onTransactions: (() -> Void)?
     public var onLogout: (() -> Void)?
@@ -118,6 +117,10 @@ class DashboardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupInterface()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         updateBalance()
     }
     
@@ -149,13 +152,8 @@ class DashboardViewController: UIViewController {
     }
 
     private func toggleBalance() {
-        let walletBalance = viewModel.displayBalance()
-        isBalanceVisible.toggle()
-        balanceLabel.text = isBalanceVisible ? walletBalance : "********"
-        visibilityButton.setImage(
-            UIImage(systemName: isBalanceVisible ? "eye" : "eye.slash"),
-            for: .normal
-        )
+        viewModel.toggleBalanceVisibility()
+        updateBalance()
     }
     
     private func updateBalance() {
