@@ -46,6 +46,30 @@ enum AuthEndpoint {
     }
 }
 
+enum TransactionEndpoint {
+    static func send(
+        amount: Decimal
+    ) throws -> Endpoint {
+
+        let payload: [String: Any] = [
+            "amount": NSDecimalNumber(
+                decimal: amount
+            ).doubleValue,
+            "recipient": "Demo Recipient"
+        ]
+
+        let body = try JSONSerialization.data(
+            withJSONObject: payload
+        )
+
+        return Endpoint(
+            path: "/posts",
+            method: .post,
+            body: body
+        )
+    }
+}
+
 enum APIError: LocalizedError {
     case invalidURL
     case invalidResponse
