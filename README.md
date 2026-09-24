@@ -28,7 +28,6 @@ send-money-app/
 │   ├── Persistence/
 │   │   └── TransactionCache.swift
 │   └── Session/
-│       ├── SessionStore.swift
 │       └── WalletStore.swift
 ├── Data/
 │   ├── Model/
